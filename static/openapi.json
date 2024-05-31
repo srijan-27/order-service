@@ -1,0 +1,314 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "kubernetes Container Log API",
+    "description": "API to manage container logs on AWS",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/container/logs": {
+      "post": {
+        "summary": "Get a container log for provider GCP,AWS,Azure",
+        "description": "This endpoint allows you to get a container log entry with AWS-specific details.",
+        "requestBody": {
+          "description": "AWS container log entry details",
+          "required": true,
+          "content": {
+            "AWS": {
+              "schema": {
+                "$ref": "#/components/schemas/AWSPostRequest"
+              }
+            },
+            "GCP": {
+              "schema": {
+                "$ref": "#/components/schemas/GCPPostRequest"
+              }
+            },
+            "AZURE": {
+              "schema": {
+                "$ref": "#/components/schemas/AzurePostRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully created the container log entry",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LogResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request. Invalid input data"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AWSPostRequest": {
+        "type": "object",
+        "properties": {
+          "profileName": {
+            "type": "string",
+            "description": "Profile name",
+            "example": "905417996850"
+          },
+          "clusterName": {
+            "type": "string",
+            "description": "Name of the Kubernetes cluster",
+            "example": "test-aws-2305"
+          },
+          "namespaceName": {
+            "type": "string",
+            "description": "Name of the namespace",
+            "example": "test-app"
+          },
+          "cloudPlatform": {
+            "type": "string",
+            "description": "Name of the cloud platform",
+            "example": "aws"
+          },
+          "appRegion": {
+            "type": "string",
+            "description": "Region of the application",
+            "example": "us-east-2"
+          },
+          "credential": {
+            "type": "object",
+            "properties": {
+              "aws_access_key_id": {
+                "type": "string",
+                "description": "AWS access key ID",
+                "example": "fadfa"
+              },
+              "aws_secret_access_key": {
+                "type": "string",
+                "description": "AWS secret access key",
+                "example": "fafa/H1/fafa"
+              }
+            },
+            "required": [
+              "aws_access_key_id",
+              "aws_secret_access_key"
+            ]
+          }
+        },
+        "required": [
+          "profileName",
+          "clusterName",
+          "namespaceName",
+          "cloudPlatform",
+          "appRegion",
+          "credential"
+        ]
+      },
+      "GCPPostRequest": {
+        "type": "object",
+        "properties": {
+          "clusterName": {
+            "type": "string",
+            "description": "Name of the Kubernetes cluster",
+            "example": "test-aws-2305"
+          },
+          "namespaceName": {
+            "type": "string",
+            "description": "Name of the namespace",
+            "example": "test-app"
+          },
+          "cloudPlatform": {
+            "type": "string",
+            "description": "Name of the cloud platform",
+            "example": "gcp"
+          },
+          "appRegion": {
+            "type": "string",
+            "description": "Region of the application",
+            "example": "us-east-2"
+          },
+          "credential": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "description": "Type of the credential",
+                "example": "service_account"
+              },
+              "project_id": {
+                "type": "string",
+                "description": "GCP project ID",
+                "example": "titanium-campus-419705"
+              },
+              "private_key_id": {
+                "type": "string",
+                "description": "Private key ID",
+                "example": "b06d4afdbbee310003036e90b87833f5049fab45"
+              },
+              "private_key": {
+                "type": "string",
+                "description": "Private key",
+                "example": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQD3DsU49spDArjb\nnG0advsbJjnajld2W3dxHujk4OjK0DbMo1fkVrtx0Uw9m7FWaDbEWl0SV3cjEhBb\nxktHs9qUFigAU+tYf7ahwhlw66iZ99roMafepuN5+8Ld71UTfVVu+GxADdzMteBw\n5uX5tY0GgJ6HHmlmFRu145HgyQd71n8VVFN6h/lBm4JSHIZctGefQBPzXufdf/GN\nRziRXrnTeZqnVjvoHqqGG0MczgVccsKjm2yG9uhiPr/037Sbd8TPYE6u3P69jAky\nr3wmlfNsQvtIuY9WZq3+JQ7V3IVwG9SuhVxb+5G/zYLIuISh+N0gMGHbBFHHwBU/\nsc0RoLGJAgMBAAECggEAQbASrien9ZM2tWVs+NljwH80aLDp/lUpd9FBGQHXw30C\n5PwVNWf+JLACdmr8Br5kuWZRUrwguBlocg5SG7ltR2xwrE2jyH8EfxPNkeGGjZGC\nCbSSLrfuyZMv57RnyWvMmFnC5nEJIQDGsR4jTXaBDZaLD9/9JCA+oujj84Ff1QPY\nPjH6REmaYP5oH4Jj/5tQxS3f/Z5Bayl0O9Qivm3wXeQI56CrKzS4rdQoRDywysEZ\nTPQzLD/Lti8opg5OUnMEjx8a0R0NXhS69ucMOymb5gJuBeRLMgyvNDdbvyundk8t\nWaHzhk48gZpHDbXeBwAg4ncFLVCK6HeEYcG7MOVBRQKBgQD+UggjUI4ODhxT8fvj\nUdB/yn4Q8+xfy+dxafo+A5O2RIV2tkDc9NOtF004CpE2H2TUPtgaBuW44scAU/M0\ng5bWcwaYQewVmiOHCbVYYLBvthOa0V+FdPjuq+LdLQKiDS3kYt+EErqbVfDfuzK9\nPVn4RoqyZLNcLFCsS7JlWsrggwKBgQD4sHW23eQEwXMWmxd9xSjcs8uWjWh3n239\n+z8Da1TS0HyZL2WEJrNB6qvtmB9DsRb6+8UZG8h+Dclcy6XBTEN/GYYJsafBJWAe\ncHdHv+AXqTjpQR7f31gh42cVwKkDz6qzVBOLU/8tNx7Xj3/vfPoZxmrZ3yi+0oHs\nbHOwfKKwAwKBgQD7Pz1s7gM5HXWc9P49CDGsXfcHdoM57K58nA8tvsjqE22q5sjT\nwUdxxAh0afQlfQRWrrM9mzzN17RzvXwSkEGvILoOJ2o9uSaKHOw8IGGOK1nY5Cmz\nJelbmRIqIXJteAmzjH528y3JkjDCRyUMUZUVs1MIhHWxhNI6NRpMCVNOUwKBgD6R\n3zwgPeN4bKVuZg2t0mcdEYcSkwst4LW7RhJtKc1UyVSdWTRTrFxUV+eSk6MrZjXF\nrMRxehNFErm3P0AQGRdca536xdNRvQpLj6dMvmwVlo0RZlw7TGhSV7hgXeXolPFD\noRs4CgbtTGQ95Zly31Ym1vF0NUM1oZzDeKQZ57DTAoGBAIJD1V3AA9N1vI8gr1dq\npeLM+dX9Vh4CXtEkpVDzIR56CdX07dXwiqI0d06Y9j4fuMx0g0C6EZNKTxccuKha\nwwif2aqcYyJgrgtK2oXuxrGkHageVkRWHKZijeYrradxbTWx0M9Kc3OUICQQ08iV\nsJhkR2vsB8FP37u1idrkGWCY"
+              },
+              "client_email": {
+                "type": "string",
+                "description": "Client email",
+                "example": "kops-20240408@titanium-campus-419705.iam.gserviceaccount.com"
+              },
+              "client_id": {
+                "type": "string",
+                "description": "Client ID",
+                "example": "117116239925621495953"
+              },
+              "auth_uri": {
+                "type": "string",
+                "description": "Auth URI",
+                "example": "https://accounts.google.com/o/oauth2/auth"
+              },
+              "token_uri": {
+                "type": "string",
+                "description": "Token URI",
+                "example": "https://oauth2.googleapis.com/token"
+              },
+              "auth_provider_x509_cert_url": {
+                "type": "string",
+                "description": "Auth provider x509 cert URL",
+                "example": "https://www.googleapis.com/oauth2/v1/certs"
+              },
+              "client_x509_cert_url": {
+                "type": "string",
+                "description": "Client x509 cert URL",
+                "example": "https://www.googleapis.com/robot/v1/metadata/x509/kops-20240408%40titanium-campus-419705.iam.gserviceaccount.com"
+              },
+              "universe_domain": {
+                "type": "string",
+                "description": "Universe domain",
+                "example": "googleapis.com"
+              }
+            },
+            "required": [
+              "type",
+              "project_id",
+              "private_key_id",
+              "private_key",
+              "client_email",
+              "client_id",
+              "auth_uri",
+              "token_uri",
+              "auth_provider_x509_cert_url",
+              "client_x509_cert_url"
+            ]
+          }
+        },
+        "required": [
+          "clusterName",
+          "namespaceName",
+          "cloudPlatform",
+          "appRegion",
+          "credential"
+        ]
+      },
+      "AzurePostRequest": {
+        "type": "object",
+        "properties": {
+          "resourceGroup": {
+            "type": "string",
+            "description": "Name of the Azure resource group",
+            "example": "test"
+          },
+          "clusterName": {
+            "type": "string",
+            "description": "Name of the Kubernetes cluster",
+            "example": "test-aws-2305"
+          },
+          "namespaceName": {
+            "type": "string",
+            "description": "Name of the namespace",
+            "example": "test-app"
+          },
+          "cloudPlatform": {
+            "type": "string",
+            "description": "Name of the cloud platform",
+            "example": "azure"
+          },
+          "appRegion": {
+            "type": "string",
+            "description": "Region of the application",
+            "example": "us-east-2"
+          },
+          "credential": {
+            "type": "object",
+            "properties": {
+              "subscriptionId": {
+                "type": "string",
+                "description": "Azure subscription ID",
+                "example": "263f0185-28e5-44b4-95a0-e318720493ac"
+              },
+              "tenantId": {
+                "type": "string",
+                "description": "Azure tenant ID",
+                "example": "312a4e75-d8b6-45e3-b300-841b57a4a219"
+              },
+              "appId": {
+                "type": "string",
+                "description": "Azure application (client) ID",
+                "example": "27a25248-856e-4b62-b48a-15ffc9203232"
+              },
+              "password": {
+                "type": "string",
+                "description": "Azure application password",
+                "example": "xuE8Q~fasf"
+              }
+            },
+            "required": [
+              "subscriptionId",
+              "tenantId",
+              "appId",
+              "password"
+            ]
+          }
+        },
+        "required": [
+          "resourceGroup",
+          "clusterName",
+          "namespaceName",
+          "cloudPlatform",
+          "appRegion",
+          "credential"
+        ]
+      },
+      "LogEntry": {
+        "type": "object",
+        "properties": {
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2024-05-23T12:38:22.324285764Z"
+          },
+          "message": {
+            "type": "string",
+            "example": "{\"level\":\"INFO\",\"time\":\"2024-05-23T12:38:22.324084567Z\",\"message\":\"tracing is enabled on: https://tempo-distributor.observability-stg.343328ae-79a9-42b1-be89-bbb227b41de6.zscloud.zopsmart.com\",\"system\":{\"alloc\":7237256,\"dataCenter\":\"NOTSET\",\"goRoutines\":3,\"host\":\"hello-service-86d98d7966-tcvkx\",\"numGC\":2,\"sys\":19743752,\"totalAlloc\":8977280},\"app\":{\"name\":\"hello-service\",\"version\":\"v1\",\"framework\":\"gofr-v0.4.0\"}}"
+          }
+        }
+      },
+      "LogResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LogEntry"
+            }
+          }
+        }
+      }
+    }
+  }
+}
